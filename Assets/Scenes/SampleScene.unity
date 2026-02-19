@@ -405,19 +405,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -435,6 +435,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6e6658e54185b7f488f43e9bda8da0c0, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 2534964839176971238, guid: 7915f9bb1049c594f9c1150de3d6ea95, type: 3}
     - target: {fileID: 919132149155446097, guid: 38d6a592a56d67f4882c5e875662ca84, type: 3}
       propertyPath: m_Name
       value: M_PipeHole
