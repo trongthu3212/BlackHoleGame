@@ -8,13 +8,10 @@ namespace BlackHole
     {
         [SerializeField] private float speedMove = 3f;
         [SerializeField] private Rigidbody rb;
-        [SerializeField] private LayerMask suckableLayer;
-        [SerializeField] private LayerMask holeLayer;
         [SerializeField] private LayerMask wallLayer;
         [SerializeField] private float skinWidth = 0.01f;
         
         private Vector3 _moveVector;
-        private HashSet<GameObject> _exitedObjects = new HashSet<GameObject>();
 
         // Update is called once per frame
         void Update()
@@ -63,50 +60,6 @@ namespace BlackHole
             }
             
             _moveVector = Vector3.zero;
-            
-            if (_exitedObjects.Count > 0)
-            {
-                foreach (var exitedObject in _exitedObjects)
-                {
-                    var suckable = exitedObject.GetComponent<ISuckable>();
-                    if (suckable != null)
-                    {
-                        suckable.DisableSuckBy(holeLayer);
-                    }
-                }
-                _exitedObjects.Clear();
-            }
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (_exitedObjects.Contains(other.gameObject))
-            {
-                _exitedObjects.Remove(other.gameObject);
-                return;
-            }
-            
-            if ((suckableLayer.value & (1 << other.gameObject.layer)) != 0)
-            {
-                var suckable = other.GetComponent<ISuckable>();
-                if (suckable != null)
-                {
-                    suckable.AllowSuckBy(holeLayer);
-                }
-            }
-        }
-        
-        private void OnTriggerExit(Collider other)
-        {
-            if ((suckableLayer.value & (1 << other.gameObject.layer)) != 0)
-            {
-                var suckable = other.GetComponent<ISuckable>();
-                
-                if (suckable != null)
-                {
-                    _exitedObjects.Add(other.gameObject);
-                }
-            }
         }
     }
 }
