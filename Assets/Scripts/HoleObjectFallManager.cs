@@ -8,15 +8,9 @@ namespace BlackHole
     public class HoleObjectFallManager : MonoBehaviour
     {
         private readonly HashSet<GameObject> _exitedObjects = new HashSet<GameObject>();
-        private readonly HashSet<GameObject> _suckingObjects = new HashSet<GameObject>();
         
         [SerializeField] private LayerMask suckableLayer;
         [SerializeField] private LayerMask holeLayer;
-        
-        public bool IsSuckingObject(GameObject target)
-        {
-            return _suckingObjects.Contains(target);
-        }
         
         private void OnTriggerEnter(Collider other)
         {
@@ -32,7 +26,6 @@ namespace BlackHole
                 if (suckable != null)
                 {
                     suckable.AllowSuckBy(holeLayer);
-                    _suckingObjects.Add(other.gameObject);
                 }
             }
         }
@@ -64,7 +57,6 @@ namespace BlackHole
                     if (suckable != null)
                     {
                         suckable.DisableSuckBy(holeLayer);
-                        _suckingObjects.Remove(exitedObject);
                     }
                 }
                 _exitedObjects.Clear();

@@ -47,7 +47,7 @@ namespace BlackHole
                 float moveDistance = speedMove * Time.fixedDeltaTime;
                 
                 // Check for walls before moving
-                if (rb.SweepTest(_moveVector, out RaycastHit hit, moveDistance + skinWidth))
+                if (rb.SweepTest(_moveVector, out RaycastHit hit, moveDistance + skinWidth, QueryTriggerInteraction.Ignore))
                 {
                     // Only stop if we hit a wall layer
                     if ((wallLayer.value & (1 << hit.collider.gameObject.layer)) != 0)
