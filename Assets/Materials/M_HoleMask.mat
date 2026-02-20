@@ -7,36 +7,33 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Floor
+  m_Name: M_HoleMask
   m_Shader: {fileID: 4800000, guid: 733fefdcde0d35f4b822d2935d5a22f4, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _MK_ALBEDO_MAP
   - _MK_ENVIRONMENT_REFLECTIONS_AMBIENT
   - _MK_LIGHT_CEL
-  - _MK_RECEIVE_SHADOWS
   - _MK_SPECULAR_ISOTROPIC
   m_InvalidKeywords:
   - _MK_ARTISTIC_ANIMATION_STUTTER
-  - _MK_WRAPPED_DIFFUSE
-  - _RECEIVESHADOWS_ON
-  - _WRAPPEDLIGHTING_ON
+  - _MK_BLEND_CUSTOM
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 1980
   stringTagMap:
     IGNOREPROJECTOR: False
     RenderType: Opaque
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _AlbedoMap:
-        m_Texture: {fileID: 2800000, guid: 5f7807a062e5e7b43a5f93f700c03797, type: 3}
-        m_Scale: {x: 3, y: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
@@ -95,7 +92,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 5f7807a062e5e7b43a5f93f700c03797, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -168,18 +165,18 @@ Material:
     - _AlembicMotionVectors: 0
     - _AlphaClip: 0
     - _AlphaClipping: 0
-    - _AlphaCutoff: 0.5
+    - _AlphaCutoff: 0.3
     - _AlphaToMask: 0
     - _Artistic: 0
     - _ArtisticFrequency: 1
     - _ArtisticProjection: 0
     - _ArtisticShadowFilter: 0
-    - _Blend: 0
+    - _Blend: 4
     - _BlendDst: 0
     - _BlendDstAlpha: 0
     - _BlendModePreserveSpecular: 1
-    - _BlendSrc: 1
-    - _BlendSrcAlpha: 1
+    - _BlendSrc: 0
+    - _BlendSrcAlpha: 0
     - _Brightness: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -187,7 +184,7 @@ Material:
     - _ColorGrading: 0
     - _Contrast: 1
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0.3
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DetailUVSet: 0
@@ -229,9 +226,9 @@ Material:
     - _OptionsTab: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _ReceiveShadows: 1
+    - _ReceiveShadows: 0
     - _RenderFace: 2
-    - _RenderPriority: 0
+    - _RenderPriority: 20
     - _Rim: 0
     - _RimSize: 1
     - _RimSmoothness: 0.5
@@ -248,13 +245,13 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Stencil: 2
-    - _StencilComp: 6
-    - _StencilFail: 0
-    - _StencilPass: 0
+    - _StencilComp: 8
+    - _StencilFail: 2
+    - _StencilPass: 2
     - _StencilReadMask: 255
     - _StencilRef: 15
     - _StencilWriteMask: 255
-    - _StencilZFail: 0
+    - _StencilZFail: 2
     - _StylizeTab: 1
     - _Surface: 0
     - _ThresholdMapScale: 1
@@ -262,13 +259,13 @@ Material:
     - _VertexAnimationIntensity: 0.05
     - _VertexAnimationStutter: 0
     - _WorkflowMode: 1
-    - _WrappedLighting: 1
+    - _WrappedLighting: 0
     - _ZTest: 4
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
-    - _AlbedoColor: {r: 0.30188674, g: 0.30188674, b: 0.30188674, a: 1}
-    - _BaseColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
-    - _Color: {r: 0.3018867, g: 0.3018867, b: 0.3018867, a: 1}
+    - _AlbedoColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveBorderColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GoochBrightColor: {r: 1, g: 1, b: 1, a: 1}
@@ -282,7 +279,7 @@ Material:
     - _VertexAnimationFrequency: {r: 2.5, g: 2.5, b: 2.5, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &2615027785736421067
+--- !u!114 &6446050612245082737
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
