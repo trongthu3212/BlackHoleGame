@@ -37,6 +37,7 @@ namespace BlackHole
         [SerializeField] private AnimationCurve suckScaleCurve;
         [SerializeField] private float maxAttractDistance = 5f;
         [SerializeField] private bool debugDraw = true;
+        [SerializeField] private HoleController holeController;
         
         private readonly List<AttractEntry> _targetAttractObjects = new List<AttractEntry>();
 
@@ -109,6 +110,11 @@ namespace BlackHole
         
         private void FixedUpdate()
         {
+            if (!holeController.IsMoving)
+            {
+                return;
+            }
+            
             for (int i = _targetAttractObjects.Count - 1; i >= 0; i--)
             {
                 var entry = _targetAttractObjects[i];

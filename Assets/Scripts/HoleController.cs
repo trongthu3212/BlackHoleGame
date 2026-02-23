@@ -12,6 +12,8 @@ namespace BlackHole
         [SerializeField] private float skinWidth = 0.01f;
         [SerializeField] private CapsuleCollider mainCollider;
         
+        public bool IsMoving => _moveVector != Vector3.zero;
+        
         private Vector3 _moveVector;
 
         // Update is called once per frame
