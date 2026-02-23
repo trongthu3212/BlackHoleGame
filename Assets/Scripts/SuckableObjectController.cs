@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BlackHole.Interfaces;
-using NaughtyAttributes;
+using SaintsField.Playa;
 using UnityEngine;
 
 namespace BlackHole

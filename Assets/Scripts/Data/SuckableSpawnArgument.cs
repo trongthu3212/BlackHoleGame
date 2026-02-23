@@ -8,5 +8,6 @@ namespace BlackHole.Data
         public Vector3 position;
         public float scale;
         public Transform parent;
+        public Vector3 initialRotate;
     }
 }

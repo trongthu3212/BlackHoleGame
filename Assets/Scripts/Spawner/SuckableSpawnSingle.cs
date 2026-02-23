@@ -23,5 +23,11 @@ namespace BlackHole.Spawner
                 obj.transform.localPosition = Vector3.one * argument.scale;
             }
         }
+        
+        public void DrawGizmos(SuckableSpawnArgument argument)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(argument.position, 0.5f);
+        }
     }
 }
