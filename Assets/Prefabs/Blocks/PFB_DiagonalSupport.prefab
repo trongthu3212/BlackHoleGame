@@ -52,12 +52,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: PFB_DiagonalSupport
       objectReference: {fileID: 0}
+    - target: {fileID: 3141279766609548604, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6713424701398667007, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 822104919401163194, guid: 864c999ea7a73ac4ba0977eb2ced12f1, type: 3}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 423915634984144332, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
