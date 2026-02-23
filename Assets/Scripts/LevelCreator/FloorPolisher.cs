@@ -34,6 +34,26 @@ namespace BlackHole.LevelCreator
             public List<GameObject> centerBlockPrefabs;
         }
 
+        [System.Serializable]
+        struct DiagonalBlockPrefabsSetup
+        {
+            public List<GameObject> diagonalBlockPrefabs;
+            public int rightToBottomRotate;
+            public int rightToTopRotate;
+            public int leftToTopRotate;
+            public int leftToBottomRotate;
+        }
+        
+        [System.Serializable]
+        struct DiagonalSupportBlockPrefabsSetup
+        {
+            public List<GameObject> diagonalSupportBlockPrefabs;
+            public int rightToBottomRotate;
+            public int rightToTopRotate;
+            public int leftToTopRotate;
+            public int leftToBottomRotate;
+        }
+
         enum GridBlockType
         {
             None = 0,
@@ -53,7 +73,23 @@ namespace BlackHole.LevelCreator
             EdgeBlockTypeEnds = EdgeRight,
             
             CornerBlockTypeStarts = CornerTopLeft,
-            CornerBlockTypeEnds = CornerBottomRight
+            CornerBlockTypeEnds = CornerBottomRight,
+            
+            DiagonalLeftToTop = 12,
+            DiagonalLeftToBottom = 13,
+            DiagonalRightToTop = 14,
+            DiagonalRightToBottom = 15,
+            
+            DiagonalBlockTypeStarts = DiagonalLeftToTop,
+            DiagonalBlockTypeEnds = DiagonalRightToBottom,
+            
+            DiagonalSupportLeftToTop = 16,
+            DiagonalSupportLeftToBottom = 17,
+            DiagonalSupportRightToTop = 18,
+            DiagonalSupportRightToBottom = 19,
+            
+            DiagonalSupportBlockTypeStarts = DiagonalSupportLeftToTop,
+            DiagonalSupportBlockTypeEnds = DiagonalSupportRightToBottom,
         }
         
         [Header("Floor Settings")]
@@ -62,8 +98,13 @@ namespace BlackHole.LevelCreator
         [SerializeField] private CornerPrefabsSetup cornerPrefabsSetup;
         [SerializeField] private EdgeBlockPrefabsSetup edgeBlockPrefabsSetup;
         [SerializeField] private CenterBlockPrefabsSetup centerBlockPrefabsSetup;
+        [SerializeField] private DiagonalBlockPrefabsSetup diagonalBlockPrefabsSetup;
+        [SerializeField] private DiagonalSupportBlockPrefabsSetup diagonalSupportBlockPrefabsSetup;
+        
+        [Header("General Settings")]
         [SerializeField] private Transform previewRoot;
         [SerializeField] private int seed = 3242563;
+        [SerializeField] private bool debugDraw = false;
         
         private GridBlockType[][] _floorGrid;
         private RectInt _floorGridBounds;
@@ -132,10 +173,60 @@ namespace BlackHole.LevelCreator
                     }
                 }
             }
+            
+            // Another run for the diagonals
+            for (int x = 0; x < _floorGridBounds.width; x++)
+            {
+                for (int z = 0; z < _floorGridBounds.height; z++)
+                {
+                    // If its edge block, we will check to create additional diagonal block for polish
+                    if (_floorGrid[x][z] == GridBlockType.EdgeLeft)
+                    {
+                        if (x > 0 && _floorGrid[x - 1][z] == GridBlockType.None)
+                        {
+                            if (z < _floorGridBounds.height - 1 && _floorGrid[x - 1][z + 1] == GridBlockType.EdgeBottom)
+                            {
+                                _floorGrid[x - 1][z] = GridBlockType.DiagonalLeftToBottom; // right to bottom diagonal
+                                _floorGrid[x][z] = GridBlockType.DiagonalSupportLeftToBottom;
+                                _floorGrid[x - 1][z + 1] = GridBlockType.DiagonalSupportLeftToBottom;
+                            }
+                            else if (z > 0 && _floorGrid[x - 1][z - 1] == GridBlockType.EdgeTop)
+                            {
+                                _floorGrid[x - 1][z] = GridBlockType.DiagonalLeftToTop; // right to top diagonal
+                                _floorGrid[x][z] = GridBlockType.DiagonalSupportLeftToTop;
+                                _floorGrid[x - 1][z - 1] = GridBlockType.DiagonalSupportLeftToTop;
+                            }
+                        }
+                    } else if (_floorGrid[x][z] == GridBlockType.EdgeRight)
+                    {
+                        if (x < _floorGridBounds.width - 1 && _floorGrid[x + 1][z] == GridBlockType.None)
+                        {
+                            if (z < _floorGridBounds.height - 1 && _floorGrid[x + 1][z + 1] == GridBlockType.EdgeBottom)
+                            {
+                                _floorGrid[x + 1][z] = GridBlockType.DiagonalRightToBottom; // left to bottom diagonal
+                                _floorGrid[x][z] = GridBlockType.DiagonalSupportRightToBottom;
+                                _floorGrid[x + 1][z + 1] = GridBlockType.DiagonalSupportRightToBottom;
+                            }
+                            else if (z > 0 && _floorGrid[x + 1][z - 1] == GridBlockType.EdgeTop)
+                            {
+                                _floorGrid[x + 1][z] = GridBlockType.DiagonalRightToTop; // left to top diagonal
+                                _floorGrid[x][z] = GridBlockType.DiagonalSupportRightToTop;
+                                _floorGrid[x + 1][z - 1] = GridBlockType.DiagonalSupportRightToTop;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void InstantiateFloor(int x, int z, GridBlockType blockType)
         {
+            var offsetAddSpawnPos = floorGrid.cellSize / 2;
+            offsetAddSpawnPos.y = 0;
+            var spawnPos =
+                floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0)) +
+                offsetAddSpawnPos;
+
             if (blockType == GridBlockType.Normal)
             {
                 var randomBlockIndex = UnityEngine.Random.Range(0, centerBlockPrefabsSetup.centerBlockPrefabs.Count);
@@ -144,7 +235,7 @@ namespace BlackHole.LevelCreator
                 var prefab = centerBlockPrefabsSetup.centerBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, randomRotationIndex * 90, 0);
                 
-                Instantiate(prefab, floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0)) + floorGrid.cellSize / 2, rotation, previewRoot);
+                Instantiate(prefab, spawnPos, rotation, previewRoot);
                 return;
             }
 
@@ -171,7 +262,7 @@ namespace BlackHole.LevelCreator
                 var prefab = edgeBlockPrefabsSetup.edgeBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0)) + floorGrid.cellSize / 2, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
                 obj.transform.localScale = Vector3.one;
                 
                 return;
@@ -200,7 +291,63 @@ namespace BlackHole.LevelCreator
                 var prefab = cornerPrefabsSetup.cornerPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0)) + floorGrid.cellSize / 2, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                obj.transform.localScale = Vector3.one;
+                return;
+            }
+            
+            if (blockType >= GridBlockType.DiagonalBlockTypeStarts && blockType <= GridBlockType.DiagonalBlockTypeEnds)
+            {
+                var randomBlockIndex = UnityEngine.Random.Range(0, diagonalBlockPrefabsSetup.diagonalBlockPrefabs.Count);
+                int rotationY = 0;
+                switch (blockType)
+                {
+                    case GridBlockType.DiagonalLeftToTop:
+                        rotationY = diagonalBlockPrefabsSetup.leftToTopRotate;
+                        break;
+                    case GridBlockType.DiagonalLeftToBottom:
+                        rotationY = diagonalBlockPrefabsSetup.leftToBottomRotate;
+                        break;
+                    case GridBlockType.DiagonalRightToTop:
+                        rotationY = diagonalBlockPrefabsSetup.rightToTopRotate;
+                        break;
+                    case GridBlockType.DiagonalRightToBottom:
+                        rotationY = diagonalBlockPrefabsSetup.rightToBottomRotate;
+                        break;
+                }
+                
+                var prefab = diagonalBlockPrefabsSetup.diagonalBlockPrefabs[randomBlockIndex];
+                var rotation = Quaternion.Euler(0, rotationY, 0);
+                
+                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                obj.transform.localScale = Vector3.one;
+                return;
+            }
+            
+            if (blockType >= GridBlockType.DiagonalSupportBlockTypeStarts && blockType <= GridBlockType.DiagonalSupportBlockTypeEnds)
+            {
+                var randomBlockIndex = UnityEngine.Random.Range(0, diagonalSupportBlockPrefabsSetup.diagonalSupportBlockPrefabs.Count);
+                int rotationY = 0;
+                switch (blockType)
+                {
+                    case GridBlockType.DiagonalSupportLeftToTop:
+                        rotationY = diagonalSupportBlockPrefabsSetup.leftToTopRotate;
+                        break;
+                    case GridBlockType.DiagonalSupportLeftToBottom:
+                        rotationY = diagonalSupportBlockPrefabsSetup.leftToBottomRotate;
+                        break;
+                    case GridBlockType.DiagonalSupportRightToTop:
+                        rotationY = diagonalSupportBlockPrefabsSetup.rightToTopRotate;
+                        break;
+                    case GridBlockType.DiagonalSupportRightToBottom:
+                        rotationY = diagonalSupportBlockPrefabsSetup.rightToBottomRotate;
+                        break;
+                }
+                
+                var prefab = diagonalSupportBlockPrefabsSetup.diagonalSupportBlockPrefabs[randomBlockIndex];
+                var rotation = Quaternion.Euler(0, rotationY, 0);
+                
+                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
                 obj.transform.localScale = Vector3.one;
                 return;
             }
@@ -209,6 +356,12 @@ namespace BlackHole.LevelCreator
         private void RebuildFloor()
         {
             UnityEngine.Random.InitState(seed);
+            
+            // Clear previous preview
+            for (int i = previewRoot.childCount - 1; i >= 0; i--)
+            {
+                DestroyImmediate(previewRoot.GetChild(i).gameObject);
+            }
 
             for (int x = 0; x < _floorGridBounds.width; x++)
             {
@@ -232,6 +385,7 @@ namespace BlackHole.LevelCreator
 
         private void OnDrawGizmos()
         {
+            if (!debugDraw) return;
             if (_floorGrid == null) return;
             
             for (int x = 0; x < _floorGridBounds.width; x++)
@@ -260,6 +414,13 @@ namespace BlackHole.LevelCreator
                             case GridBlockType.CornerBottomLeft:
                             case GridBlockType.CornerBottomRight:
                                 Gizmos.color = Color.red;
+                                Handles.Label(worldPos, _floorGrid[x][z].ToString());
+                                break;
+                            case GridBlockType.DiagonalLeftToTop:
+                            case GridBlockType.DiagonalLeftToBottom:
+                            case GridBlockType.DiagonalRightToTop:
+                            case GridBlockType.DiagonalRightToBottom:
+                                Gizmos.color = Color.blue;
                                 Handles.Label(worldPos, _floorGrid[x][z].ToString());
                                 break;
                         }

@@ -10,6 +10,7 @@ namespace BlackHole
         [SerializeField] private Rigidbody rb;
         [SerializeField] private LayerMask wallLayer;
         [SerializeField] private float skinWidth = 0.01f;
+        [SerializeField] private CapsuleCollider mainCollider;
         
         private Vector3 _moveVector;
 
@@ -47,7 +48,7 @@ namespace BlackHole
                 float moveDistance = speedMove * Time.fixedDeltaTime;
                 
                 // Check for walls before moving
-                if (rb.SweepTest(_moveVector, out RaycastHit hit, moveDistance + skinWidth, QueryTriggerInteraction.Ignore))
+                if (Physics.SphereCast(rb.position, mainCollider.radius * 2, _moveVector.normalized, out RaycastHit hit, moveDistance + skinWidth, wallLayer, QueryTriggerInteraction.Ignore))
                 {
                     // Only stop if we hit a wall layer
                     if ((wallLayer.value & (1 << hit.collider.gameObject.layer)) != 0)
