@@ -178,7 +178,7 @@ namespace BlackHole
         private void FillVariables()
         {
             selfRigidbody = GetComponentInParent<Rigidbody>();
-            var sphereCollider = GetComponent<SphereCollider>();
+            var sphereCollider = GetComponent<CapsuleCollider>();
             if (sphereCollider != null)
                 maxAttractDistance = sphereCollider.radius * transform.localScale.x;
         }

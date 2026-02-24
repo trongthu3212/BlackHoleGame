@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 754b6a490404432ea6a221d2fa24424a, type: 3}
-  m_Name: SO_Candy
+  m_Name: SO_Hamburger
   m_EditorClassIdentifier: 
-  objectId: 4
-  prefab: {fileID: 7906553332033652429, guid: 08ca56a60747c1d4a81589d25531aa6b, type: 3}
-  baselineYOffset: 0.19706085
+  objectId: 11
+  prefab: {fileID: 4080546556539267070, guid: b70e36d1846177e4487dec6fc87bf9e7, type: 3}
+  baselineYOffset: 0.11018317
   defaultScale: 4

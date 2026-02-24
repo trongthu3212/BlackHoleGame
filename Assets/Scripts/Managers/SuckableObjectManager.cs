@@ -16,17 +16,37 @@ namespace BlackHole
             Instance = this;
         }
         
-        public GameObject GetSuckableObjectPrefab(SuckableObjectId objectId)
+        #if UNITY_EDITOR
+        private void OnValidate()
         {
-            foreach (var entry in suckableObjectCollection.entries)
+            Instance = this;
+        }
+        #endif
+        
+        public GameObject InstantiateSuckableObject(SuckableObjectId objectId, Vector3 basePosition, Quaternion rotation, float scale = 1f, Transform parent = null)
+        {
+            var entry = suckableObjectCollection.GetEntryById(objectId);
+            if (entry == null)
             {
-                if (entry.objectId == objectId)
-                {
-                    return entry.prefab;
-                }
+                Debug.LogWarning($"No entry found for object ID: {objectId}");
+                return null;
             }
-
-            return null;
+            var prefab = entry.prefab;
+            if (prefab == null)
+            {
+                Debug.LogWarning($"Prefab is null for object ID: {objectId}");
+                return null;
+            }
+            var actualScale = entry.defaultScale * scale;
+            var actualSpawnPosition = basePosition + Vector3.up * entry.GetBaselineYOffset(actualScale);
+            var instance = Instantiate(prefab, actualSpawnPosition, rotation);
+            instance.transform.localScale = Vector3.one * actualScale;
+            
+            if (parent != null)
+            {
+                instance.transform.SetParent(parent);
+            }
+            return instance;
         }
     }
 }

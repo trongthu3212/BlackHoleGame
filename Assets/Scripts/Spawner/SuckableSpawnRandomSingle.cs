@@ -1,15 +1,19 @@
+using System.Collections.Generic;
 using BlackHole.Data;
 using BlackHole.Interfaces;
 using UnityEngine;
 
 namespace BlackHole.Spawner
 {
-    public class SuckableSpawnSingle : ISuckableSpawnLogic
+    public class SuckableSpawnRandomSingle : ISuckableSpawnLogic
     {
-        [SerializeField] private SuckableObjectId targetObjectId;
+        [SerializeField] private List<SuckableObjectId> targetObjectIds;
         
         public void Execute(SuckableSpawnArgument argument)
         {
+            var randomIndex = Random.Range(0, targetObjectIds.Count);
+            var targetObjectId = targetObjectIds[randomIndex];
+            
             argument.suckableObjectManager.InstantiateSuckableObject(
                 targetObjectId,
                 argument.position,
@@ -23,5 +27,6 @@ namespace BlackHole.Spawner
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(argument.position, 0.5f);
         }
+        
     }
 }

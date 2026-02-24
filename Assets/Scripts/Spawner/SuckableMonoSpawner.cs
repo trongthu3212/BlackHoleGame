@@ -1,4 +1,3 @@
-using System;
 using BlackHole.Data;
 using BlackHole.Interfaces;
 using SaintsField;
@@ -12,9 +11,17 @@ namespace BlackHole.Spawner
         [SerializeReference, ReferencePicker]
         private ISuckableSpawnLogic spawnLogic;
 
+        [Header("Spawn initial configuration")]
         [SerializeField] private float scale;
         [SerializeField] private Transform parent;
+        [SerializeField] private int seed = 54535353;
 
+        public ISuckableSpawnLogic SpawnLogic
+        {
+            get => spawnLogic;
+            set => spawnLogic = value;
+        }
+        
         [Button]
         private void Execute()
         {
@@ -24,11 +31,14 @@ namespace BlackHole.Spawner
                 return;
             }
             
+            UnityEngine.Random.InitState(seed);
+            
             var argument = new SuckableSpawnArgument
             {
                 position = transform.position,
                 scale = transform.localScale.x,
-                parent = parent
+                parent = parent,
+                suckableObjectManager = SuckableObjectManager.Instance
             };
             
             spawnLogic.Execute(argument);
@@ -42,8 +52,11 @@ namespace BlackHole.Spawner
             {
                 position = transform.position,
                 scale = transform.localScale.x,
-                parent = transform
+                parent = transform,
+                suckableObjectManager = SuckableObjectManager.Instance
             };
+            
+            UnityEngine.Random.InitState(seed);
             
             spawnLogic.DrawGizmos(argument);
         }

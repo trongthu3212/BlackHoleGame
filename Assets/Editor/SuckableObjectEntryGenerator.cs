@@ -31,6 +31,9 @@ namespace BlackHole.Editor
                     continue;
                 }
 
+                // Calculate baseline Y offset
+                float baselineYOffset = CalculateBaselineYOffset(prefab);
+
                 // Create the entry asset
                 string assetName = $"SO_{id}";
                 string assetPath = $"{OUTPUT_FOLDER}/{assetName}.asset";
@@ -44,6 +47,7 @@ namespace BlackHole.Editor
                     SuckableObjectEntry entry = ScriptableObject.CreateInstance<SuckableObjectEntry>();
                     entry.objectId = id;
                     entry.prefab = prefab;
+                    entry.baselineYOffset = baselineYOffset;
 
                     // Create output folder if it doesn't exist
                     if (!AssetDatabase.IsValidFolder(OUTPUT_FOLDER))
@@ -52,21 +56,99 @@ namespace BlackHole.Editor
                     }
 
                     AssetDatabase.CreateAsset(entry, assetPath);
-                    Debug.Log($"Created: {assetPath}");
+                    Debug.Log($"Created: {assetPath} (BaselineY: {baselineYOffset:F3})");
                 }
                 else
                 {
                     // Update existing entry
                     existingEntry.objectId = id;
                     existingEntry.prefab = prefab;
+                    existingEntry.baselineYOffset = baselineYOffset;
                     EditorUtility.SetDirty(existingEntry);
-                    Debug.Log($"Updated: {assetPath}");
+                    Debug.Log($"Updated: {assetPath} (BaselineY: {baselineYOffset:F3})");
                 }
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("SuckableObjectEntry generation complete!");
+        }
+
+        private static float CalculateBaselineYOffset(GameObject prefab)
+        {
+            // Temporarily instantiate to calculate bounds
+            GameObject tempInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+
+            if (tempInstance == null)
+            {
+                Debug.LogWarning($"Failed to instantiate prefab to calculate baseline: {prefab.name}");
+                return 0f;
+            }
+
+            try
+            {
+                Bounds bounds = CalculateBounds(tempInstance);
+
+                // Return the distance from the lowest point to origin (this is the baseline Y offset)
+                return -bounds.min.y;
+            }
+            finally
+            {
+                Object.DestroyImmediate(tempInstance);
+            }
+        }
+
+        private static Bounds CalculateBounds(GameObject obj)
+        {
+            Bounds bounds = new Bounds(obj.transform.position, Vector3.zero);
+            bool hasBounds = false;
+
+            // Get bounds from all renderers
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer renderer in renderers)
+            {
+                if (hasBounds)
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+                else
+                {
+                    bounds = renderer.bounds;
+                    hasBounds = true;
+                }
+            }
+
+            // If no renderers, try mesh filters
+            if (!hasBounds)
+            {
+                MeshFilter[] meshFilters = obj.GetComponentsInChildren<MeshFilter>();
+
+                foreach (MeshFilter meshFilter in meshFilters)
+                {
+                    if (meshFilter.sharedMesh != null)
+                    {
+                        Vector3 meshBoundsMin = meshFilter.sharedMesh.bounds.min;
+                        Vector3 meshBoundsMax = meshFilter.sharedMesh.bounds.max;
+
+                        Vector3 worldMin = meshFilter.transform.TransformPoint(meshBoundsMin);
+                        Vector3 worldMax = meshFilter.transform.TransformPoint(meshBoundsMax);
+
+                        if (hasBounds)
+                        {
+                            bounds.Encapsulate(worldMin);
+                            bounds.Encapsulate(worldMax);
+                        }
+                        else
+                        {
+                            bounds = new Bounds((worldMin + worldMax) / 2, worldMax - worldMin);
+                            hasBounds = true;
+                        }
+                    }
+                }
+            }
+
+            return bounds;
         }
     }
 }

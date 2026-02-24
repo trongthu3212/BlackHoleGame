@@ -15,27 +15,24 @@ namespace BlackHole.Spawner
         
         public void Execute(SuckableSpawnArgument argument)
         {
-            var prefab = SuckableObjectManager.Instance.GetSuckableObjectPrefab(objectId);
-            if (prefab == null)
-            {
-                Debug.LogError($"Prefab not found for object ID: {objectId}");
-                return;
-            }
-
             float lastObjHeight = 0f;
             
             for (int i = 0; i < stackCount; i++)
             {
                 var spawnPosition = argument.position + Vector3.up * lastObjHeight;
                 var rotation = Quaternion.Euler(argument.initialRotate);
-                var obj = Object.Instantiate(prefab, spawnPosition, rotation, parent: argument.parent);
+                var obj = argument.suckableObjectManager.InstantiateSuckableObject(
+                    objectId,
+                    spawnPosition,
+                    rotation,
+                    argument.scale,
+                    parent: argument.parent);
                 if (obj != null)
                 {
-                    obj.transform.localScale = Vector3.one * argument.scale;
                     var collider = obj.GetComponent<Collider>();
                     if (collider != null)
                     {
-                        lastObjHeight += (collider.bounds.size.y + offsetSizeY) * argument.scale;
+                        lastObjHeight += collider.bounds.size.y * obj.transform.localScale.y + offsetSizeY;
                     }
                 }
             }

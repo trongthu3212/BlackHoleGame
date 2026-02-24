@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectId: 0
   prefab: {fileID: 6418362747367832080, guid: 401906199de79c847b0982753d28283b, type: 3}
+  baselineYOffset: 0.19317913
+  defaultScale: 4

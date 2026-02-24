@@ -1,3 +1,4 @@
+using SaintsField.Playa;
 using UnityEngine;
 
 namespace BlackHole.Data
@@ -7,5 +8,12 @@ namespace BlackHole.Data
     {
         public SuckableObjectId objectId;
         public GameObject prefab;
+        public float baselineYOffset;
+        public float defaultScale;
+        
+        public float GetBaselineYOffset(float scale = 1f)
+        {
+            return baselineYOffset * scale;
+        }
     }
 }

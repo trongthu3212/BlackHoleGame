@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BlackHole.Data;
 using BlackHole.Interfaces;
 using SaintsField;
@@ -7,7 +8,7 @@ namespace BlackHole.Spawner
 {
     public class SuckableSpawnRect : ISuckableSpawnLogic
     {
-        [SerializeReference, ReferencePicker] private ISuckableSpawnLogic eachElement;
+        [SerializeReference, ReferencePicker] private List<ISuckableSpawnLogic> elements;
         [SerializeField] private float xSpacing;
         [SerializeField] private float zSpacing;
         [SerializeField] private bool isInterleaved;
@@ -16,10 +17,11 @@ namespace BlackHole.Spawner
         
         public void Execute(SuckableSpawnArgument argument)
         {
-            if (eachElement == null)
+            if (elements == null)
             {
                 return;
             }
+            
             var countX = Mathf.RoundToInt(size.x * argument.scale / xSpacing);
             var countZ = Mathf.RoundToInt(size.y * argument.scale / zSpacing);
             
@@ -27,15 +29,19 @@ namespace BlackHole.Spawner
             {
                 for (var j = 0; j < countZ; j++)
                 {
-                    var offsetX = i * xSpacing - size.x * argument.scale / 2 + (isInterleaved ? (j % 2) * xSpacing / 2 : 0);
-                    var offsetZ = j * zSpacing - size.y * argument.scale / 2;
+                    var randomElementIndex = Random.Range(0, elements.Count);
+                    var eachElement = elements[randomElementIndex];
+                    
+                    var offsetX = (i + 0.5f) * xSpacing - size.x * argument.scale / 2 + (isInterleaved ? (j % 2) * xSpacing / 2 : 0);
+                    var offsetZ = (j + 0.5f) * zSpacing - size.y * argument.scale / 2;
                     
                     var elementArgument = new SuckableSpawnArgument
                     {
                         position = argument.position + new Vector3(offsetX, 0, offsetZ),
                         scale = elementScale,
                         parent = argument.parent,
-                        initialRotate = argument.initialRotate
+                        initialRotate = argument.initialRotate,
+                        suckableObjectManager = argument.suckableObjectManager
                     };
                     
                     eachElement.Execute(elementArgument);
@@ -49,7 +55,7 @@ namespace BlackHole.Spawner
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(argument.position, new Vector3(size.x * argument.scale, 0.1f, size.y * argument.scale));
             
-            if (eachElement == null)
+            if (elements == null)
             {
                 return;
             }
@@ -65,6 +71,9 @@ namespace BlackHole.Spawner
             {
                 for (var j = 0; j < countZ; j++)
                 {
+                    var randomElementIndex = Random.Range(0, elements.Count);
+                    var eachElement = elements[randomElementIndex];
+
                     var offsetX = (i + 0.5f) * xSpacing - size.x * argument.scale / 2 + (isInterleaved ? (j % 2) * xSpacing / 2 : 0);
                     var offsetZ = (j + 0.5f) * zSpacing - size.y * argument.scale / 2;
                     
@@ -78,7 +87,8 @@ namespace BlackHole.Spawner
                         position = argument.position + new Vector3(offsetX, 0, offsetZ),
                         scale = elementScale,
                         parent = argument.parent,
-                        initialRotate = argument.initialRotate
+                        initialRotate = argument.initialRotate,
+                        suckableObjectManager = argument.suckableObjectManager
                     };
 
                     eachElement.DrawGizmos(elementArgument);

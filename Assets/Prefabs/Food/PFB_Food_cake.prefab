@@ -116,7 +116,7 @@ MonoBehaviour:
   providedRigidbody: {fileID: -6422408897287015403}
   defaultCollisionLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1281
   providedColliders:
   - {fileID: -338262771171103252}
   CurrentStateMirror: 0

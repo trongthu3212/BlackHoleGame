@@ -9,5 +9,6 @@ namespace BlackHole.Data
         public float scale;
         public Transform parent;
         public Vector3 initialRotate;
+        public SuckableObjectManager suckableObjectManager;
     }
 }
