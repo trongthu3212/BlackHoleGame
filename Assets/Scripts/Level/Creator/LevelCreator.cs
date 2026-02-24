@@ -10,8 +10,19 @@ namespace BlackHole.LevelCreator
 {
     public class LevelCreator : MonoBehaviour
     {
+        [Header("Transform settings")]
+        [Header("Floor")]
         [SerializeField] private Transform floorTransform;
+        [SerializeField] private Grid floorGrid;
         [SerializeField] private Transform spawnerTransform;
+
+        private FloorPolisher _floorPolisher;
+
+        private void OnValidate()
+        {
+            _floorPolisher = new();
+            _floorPolisher.Initialize(floorTransform, floorGrid);
+        }
 
         [Button]
         private void AutoSetup()
@@ -29,6 +40,12 @@ namespace BlackHole.LevelCreator
                 Debug.Log("Can't find spawner root transform. Creating one.");
                 spawnerTransform = new GameObject("Spawners").transform;
                 spawnerTransform.parent = transform;
+            }
+
+            floorGrid = GetComponent<Grid>();
+            if (floorGrid == null)
+            {
+                Debug.LogError("Can't find Grid component for floor!");
             }
         }
         
@@ -49,6 +66,18 @@ namespace BlackHole.LevelCreator
             
             Selection.activeGameObject = spawnerObj;
         }
+
+        [Button]
+        private void TryDoPolish()
+        {
+            if (_floorPolisher == null)
+            {
+                Debug.LogError("Floor polisher is not initialized. Please check the floor transform and grid settings.");
+                return;
+            }
+            
+            _floorPolisher.ExecutePolish();
+        }
         
         private void OnDrawGizmos()
         {
@@ -57,6 +86,11 @@ namespace BlackHole.LevelCreator
 
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position, 1f);
+
+            if (_floorPolisher != null)
+            {
+                _floorPolisher.TryDrawGizmos();
+            }
         }
     }
 }

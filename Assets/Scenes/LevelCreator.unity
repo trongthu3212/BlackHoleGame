@@ -4986,7 +4986,6 @@ GameObject:
   - component: {fileID: 90067997}
   - component: {fileID: 90067996}
   - component: {fileID: 90067999}
-  - component: {fileID: 90067998}
   m_Layer: 0
   m_Name: LevelGrid
   m_TagString: Untagged
@@ -5026,60 +5025,6 @@ Transform:
   - {fileID: 2056088264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &90067998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90067995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 511fc11333bb44d6b9636f693a737342, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floorRoot: {fileID: 713993952}
-  floorGrid: {fileID: 90067996}
-  cornerPrefabsSetup:
-    cornerPrefabs:
-    - {fileID: 2751323663451958913, guid: 4cc9e7cbc9076734fb6a2b42c8d330ee, type: 3}
-    - {fileID: 2753192486038734169, guid: a1e127bf8c406744c8355024ad7a1c46, type: 3}
-    topLeftCornerRotate: 270
-    topRightCornerRotate: 0
-    bottomLeftCornerRotate: 180
-    bottomRightCornerRotate: 90
-  edgeBlockPrefabsSetup:
-    edgeBlockPrefabs:
-    - {fileID: 1613915720546919678, guid: fb6d6342fb2bd014f8614cf42330298d, type: 3}
-    - {fileID: 6467599816730306682, guid: d6f0386af290dd84faca231922f6035b, type: 3}
-    - {fileID: 2106655985390517819, guid: 8b8061bc9db010c44bb33e40e25c03ab, type: 3}
-    - {fileID: 6438057853018098515, guid: 590ec782b8ebea5489103e6e34938fca, type: 3}
-    topEdgeRotate: 0
-    bottomEdgeRotate: 180
-    leftEdgeRotate: 270
-    rightEdgeRotate: 90
-  centerBlockPrefabsSetup:
-    centerBlockPrefabs:
-    - {fileID: 6046078066599255739, guid: 1065abe8a2c2e584e94388a529a498d7, type: 3}
-    - {fileID: 3123845429446156176, guid: b946dcb4a10c33840854aad892b093c7, type: 3}
-  diagonalBlockPrefabsSetup:
-    diagonalBlockPrefabs:
-    - {fileID: 2751323663451958913, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
-    - {fileID: 8188834474158645547, guid: 94786e63f11c6b849b392af8a0405381, type: 3}
-    rightToBottomRotate: 90
-    rightToTopRotate: 0
-    leftToTopRotate: 270
-    leftToBottomRotate: 180
-  diagonalSupportBlockPrefabsSetup:
-    diagonalSupportBlockPrefabs:
-    - {fileID: 8188834474158645547, guid: 0ab99bc8623926a479234730a2a1f18c, type: 3}
-    rightToBottomRotate: 90
-    rightToTopRotate: 0
-    leftToTopRotate: 270
-    leftToBottomRotate: 180
-  previewRoot: {fileID: 1915732436}
-  seed: 3242563
-  debugDraw: 0
 --- !u!114 &90067999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5093,6 +5038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   floorTransform: {fileID: 713993952}
+  floorGrid: {fileID: 90067996}
   spawnerTransform: {fileID: 1702727781}
 --- !u!1 &90176353
 GameObject:
