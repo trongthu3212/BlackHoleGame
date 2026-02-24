@@ -8,9 +8,10 @@ namespace BlackHole.Spawner
     {
         [SerializeField] private SuckableObjectId objectId;
         [SerializeField] private int stackCount;
-        
+        [SerializeField] private float offsetSizeY = 0.1f;
+
         [Header("Debug preview")]
-        [SerializeField] float perElementHeight = 1f;
+        [SerializeField] private float perElementHeight = 1f;
         
         public void Execute(SuckableSpawnArgument argument)
         {
@@ -34,7 +35,7 @@ namespace BlackHole.Spawner
                     var collider = obj.GetComponent<Collider>();
                     if (collider != null)
                     {
-                        lastObjHeight += collider.bounds.size.y * argument.scale;
+                        lastObjHeight += (collider.bounds.size.y + offsetSizeY) * argument.scale;
                     }
                 }
             }

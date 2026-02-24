@@ -12,6 +12,7 @@ namespace BlackHole.Spawner
         [SerializeField] private float zSpacing;
         [SerializeField] private bool isInterleaved;
         [SerializeField] private Vector2 size;
+        [SerializeField] private float elementScale;
         
         public void Execute(SuckableSpawnArgument argument)
         {
@@ -32,7 +33,7 @@ namespace BlackHole.Spawner
                     var elementArgument = new SuckableSpawnArgument
                     {
                         position = argument.position + new Vector3(offsetX, 0, offsetZ),
-                        scale = 1f,
+                        scale = elementScale,
                         parent = argument.parent,
                         initialRotate = argument.initialRotate
                     };
@@ -75,7 +76,7 @@ namespace BlackHole.Spawner
                     var elementArgument = new SuckableSpawnArgument
                     {
                         position = argument.position + new Vector3(offsetX, 0, offsetZ),
-                        scale = 1f,
+                        scale = elementScale,
                         parent = argument.parent,
                         initialRotate = argument.initialRotate
                     };
