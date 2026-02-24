@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace BlackHole.Spawner
 {
+    [System.Serializable]
     public class SuckableSpawnRandomSingle : ISuckableSpawnLogic
     {
         [SerializeField] private List<SuckableObjectId> targetObjectIds;
@@ -27,6 +28,5 @@ namespace BlackHole.Spawner
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(argument.position, 0.5f);
         }
-        
     }
 }

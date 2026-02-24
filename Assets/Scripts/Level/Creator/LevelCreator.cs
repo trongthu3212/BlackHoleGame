@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BlackHole.Interfaces;
 using BlackHole.Spawner;
 using SaintsField;
@@ -67,16 +68,42 @@ namespace BlackHole.LevelCreator
             Selection.activeGameObject = spawnerObj;
         }
 
-        [Button]
-        private void TryDoPolish()
+        private List<SuckableSpawnEntry> ListAllSpawnerEntries()
         {
-            if (_floorPolisher == null)
-            {
-                Debug.LogError("Floor polisher is not initialized. Please check the floor transform and grid settings.");
-                return;
-            }
+            var entries = new List<SuckableSpawnEntry>();
+            if (spawnerTransform == null) return entries;
             
+            var spawners = spawnerTransform.GetComponentsInChildren<SuckableMonoSpawner>();
+            foreach (var spawner in spawners)
+            {
+                entries.Add(new SuckableSpawnEntry
+                {
+                    position = spawner.transform.position,
+                    rotation = spawner.transform.rotation.eulerAngles,
+                    spawnLogic = spawner.SpawnLogic
+                });
+            }
+
+            return entries;
+        }
+        
+        [Button]
+        private void TrySerialize()
+        {
             _floorPolisher.ExecutePolish();
+            
+            var levelData = new LevelData
+            {
+                floorGrid = _floorPolisher.FloorGrids,
+                floorGridBounds = _floorPolisher.FloorGridBounds,
+                suckableSpawnEntries = ListAllSpawnerEntries()
+            };
+
+            var result = JsonUtility.ToJson(levelData);
+            Debug.Log(result);
+            
+            var resultCopy2 = JsonUtility.FromJson<LevelData>(result);
+            Debug.Log("Im just testing");
         }
         
         private void OnDrawGizmos()

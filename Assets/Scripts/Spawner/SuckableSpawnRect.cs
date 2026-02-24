@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace BlackHole.Spawner
 {
+    [System.Serializable]
     public class SuckableSpawnRect : ISuckableSpawnLogic
     {
         [SerializeReference, ReferencePicker] private List<ISuckableSpawnLogic> elements;

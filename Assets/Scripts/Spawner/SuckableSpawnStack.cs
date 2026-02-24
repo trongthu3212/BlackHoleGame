@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace BlackHole.Spawner
 {
+    [System.Serializable]
     public class SuckableSpawnStack : ISuckableSpawnLogic
     {
         [SerializeField] private SuckableObjectId objectId;

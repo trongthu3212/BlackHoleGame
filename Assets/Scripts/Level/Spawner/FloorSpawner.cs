@@ -65,8 +65,6 @@ namespace BlackHole.LevelSpawner
         [SerializeField] private DiagonalSupportBlockPrefabsSetup diagonalSupportBlockPrefabsSetup;
         
         [Header("General Settings")]
-        [SerializeField] private Transform previewRoot;
-        [SerializeField] private int seed = 3242563;
         [SerializeField] private bool debugDraw = false;
         
         private GridBlockType[][] _floorGrid;
@@ -182,7 +180,7 @@ namespace BlackHole.LevelSpawner
             }
         }
 
-        private void InstantiateFloor(int x, int z, GridBlockType blockType)
+        private void InstantiateFloor(int x, int z, GridBlockType blockType, Transform previewRoot)
         {
             var offsetAddSpawnPos = floorGrid.cellSize / 2;
             offsetAddSpawnPos.y = 0;
@@ -316,10 +314,8 @@ namespace BlackHole.LevelSpawner
             }
         }
         
-        private void RebuildFloor()
+        public void RebuildFloor(GridBlockType[][] floorGrid, Transform previewRoot)
         {
-            UnityEngine.Random.InitState(seed);
-            
             // Clear previous preview
             for (int i = previewRoot.childCount - 1; i >= 0; i--)
             {
@@ -332,20 +328,12 @@ namespace BlackHole.LevelSpawner
                 {
                     if (_floorGrid[x][z] != GridBlockType.None)
                     {
-                        InstantiateFloor(x, z, _floorGrid[x][z]);
+                        InstantiateFloor(x, z, floorGrid[x][z], previewRoot);
                     }
                 }
             }
         }
-
-        [Button]
-        public void Polish()
-        {
-            _floorGridBounds = IdentifyGridSize();
-            BuildFloorGridData();
-            RebuildFloor();
-        }
-
+        
         private void OnDrawGizmos()
         {
             if (!debugDraw) return;
