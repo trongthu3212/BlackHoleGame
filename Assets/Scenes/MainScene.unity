@@ -293,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: 0, y: 15.15, z: -6.83}
+  m_LocalPosition: {x: 0, y: 20.15, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1013,6 +1013,22 @@ PrefabInstance:
     - target: {fileID: 2177746297041217145, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
       propertyPath: m_Name
       value: Singletons
+      objectReference: {fileID: 0}
+    - target: {fileID: 4651144415617035969, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
+      propertyPath: FollowOffset.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4651144415617035969, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
+      propertyPath: FollowOffset.z
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5658627097316297559, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 30.900234
+      objectReference: {fileID: 0}
+    - target: {fileID: 5658627097316297559, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -13.521297
       objectReference: {fileID: 0}
     - target: {fileID: 7399655370410751822, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
       propertyPath: Target.TrackingTarget
