@@ -56,8 +56,6 @@ namespace BlackHole.LevelSpawner
         }
         
         [Header("Floor Settings")]
-        [SerializeField] private Transform floorRoot;
-        [SerializeField] private Grid floorGrid;
         [SerializeField] private CornerPrefabsSetup cornerPrefabsSetup;
         [SerializeField] private EdgeBlockPrefabsSetup edgeBlockPrefabsSetup;
         [SerializeField] private CenterBlockPrefabsSetup centerBlockPrefabsSetup;
@@ -67,126 +65,24 @@ namespace BlackHole.LevelSpawner
         [Header("General Settings")]
         [SerializeField] private bool debugDraw = false;
         
-        private GridBlockType[][] _floorGrid;
         private RectInt _floorGridBounds;
-
-        private RectInt IdentifyGridSize()
+        
+        private Transform _floorRoot;
+        private Vector2 _floorCellSize;
+        
+        private Vector3 GetCellPosition(int x, int z)
         {
-            int minX = int.MaxValue, maxX = int.MinValue;
-            int minZ = int.MaxValue, maxZ = int.MinValue;
-            
-            foreach (var childFloor in floorRoot)
+            var offsetAddSpawnPos = new Vector3(_floorCellSize.x / 2, 0, _floorCellSize.y / 2)
             {
-                var posOfTile = floorGrid.WorldToCell(((Transform) childFloor).position);
-                
-                minX = Mathf.Min(minX, posOfTile.x);
-                maxX = Mathf.Max(maxX, posOfTile.x);
-                minZ = Mathf.Min(minZ, posOfTile.y);
-                maxZ = Mathf.Max(maxZ, posOfTile.y);
-            }
-            
-            return new RectInt(minX, minZ, maxX - minX + 1, maxZ - minZ + 1);
+                y = 0
+            };
+            var basePos = new Vector3((x + _floorGridBounds.xMin) * _floorCellSize.x, 0, (z + _floorGridBounds.yMin) * _floorCellSize.y);
+            return _floorRoot.transform.position + basePos + offsetAddSpawnPos;
         }
-
-        private void BuildFloorGridData()
+        
+        private void InstantiateFloor(int x, int z, GridBlockType blockType)
         {
-            _floorGrid = new GridBlockType[_floorGridBounds.width][];
-            for (int x = 0; x < _floorGridBounds.width; x++)
-            {
-                _floorGrid[x] = new GridBlockType[_floorGridBounds.height];
-            }
-            
-            foreach (var childFloor in floorRoot)
-            {
-                var posOfTile = floorGrid.WorldToCell(((Transform) childFloor).position);
-                int gridX = posOfTile.x - _floorGridBounds.xMin;
-                int gridZ = posOfTile.y - _floorGridBounds.yMin;
-                _floorGrid[gridX][gridZ] = GridBlockType.Normal;
-            }
-            
-            for (int x = 0; x < _floorGridBounds.width; x++)
-            {
-                for (int z = 0; z < _floorGridBounds.height; z++)
-                {
-                    if (_floorGrid[x][z] == GridBlockType.Normal)
-                    {
-                        bool hasTop = z < _floorGridBounds.height - 1 && _floorGrid[x][z + 1] != GridBlockType.None;
-                        bool hasBottom = z > 0  && _floorGrid[x][z - 1] != GridBlockType.None;
-                        bool hasLeft = x > 0 && _floorGrid[x - 1][z] != GridBlockType.None;
-                        bool hasRight = x < _floorGridBounds.width - 1 && _floorGrid[x + 1][z] != GridBlockType.None;
-
-                        if (!hasBottom && !hasLeft)
-                            _floorGrid[x][z] = GridBlockType.CornerBottomLeft;
-                        else if (!hasBottom && !hasRight)
-                            _floorGrid[x][z] = GridBlockType.CornerBottomRight;
-                        else if (!hasTop && !hasLeft)
-                            _floorGrid[x][z] = GridBlockType.CornerTopLeft;
-                        else if (!hasTop && !hasRight)
-                            _floorGrid[x][z] = GridBlockType.CornerTopRight;
-                        else if (!hasTop)
-                            _floorGrid[x][z] = GridBlockType.EdgeTop;
-                        else if (!hasBottom)
-                            _floorGrid[x][z] = GridBlockType.EdgeBottom;
-                        else if (!hasLeft)
-                            _floorGrid[x][z] = GridBlockType.EdgeLeft;
-                        else if (!hasRight)
-                            _floorGrid[x][z] = GridBlockType.EdgeRight;
-                    }
-                }
-            }
-            
-            // Another run for the diagonals
-            for (int x = 0; x < _floorGridBounds.width; x++)
-            {
-                for (int z = 0; z < _floorGridBounds.height; z++)
-                {
-                    // If its edge block, we will check to create additional diagonal block for polish
-                    if (_floorGrid[x][z] == GridBlockType.EdgeLeft)
-                    {
-                        if (x > 0 && _floorGrid[x - 1][z] == GridBlockType.None)
-                        {
-                            if (z < _floorGridBounds.height - 1 && _floorGrid[x - 1][z + 1] == GridBlockType.EdgeBottom)
-                            {
-                                _floorGrid[x - 1][z] = GridBlockType.DiagonalLeftToBottom; // right to bottom diagonal
-                                _floorGrid[x][z] = GridBlockType.DiagonalSupportLeftToBottom;
-                                _floorGrid[x - 1][z + 1] = GridBlockType.DiagonalSupportLeftToBottom;
-                            }
-                            else if (z > 0 && _floorGrid[x - 1][z - 1] == GridBlockType.EdgeTop)
-                            {
-                                _floorGrid[x - 1][z] = GridBlockType.DiagonalLeftToTop; // right to top diagonal
-                                _floorGrid[x][z] = GridBlockType.DiagonalSupportLeftToTop;
-                                _floorGrid[x - 1][z - 1] = GridBlockType.DiagonalSupportLeftToTop;
-                            }
-                        }
-                    } else if (_floorGrid[x][z] == GridBlockType.EdgeRight)
-                    {
-                        if (x < _floorGridBounds.width - 1 && _floorGrid[x + 1][z] == GridBlockType.None)
-                        {
-                            if (z < _floorGridBounds.height - 1 && _floorGrid[x + 1][z + 1] == GridBlockType.EdgeBottom)
-                            {
-                                _floorGrid[x + 1][z] = GridBlockType.DiagonalRightToBottom; // left to bottom diagonal
-                                _floorGrid[x][z] = GridBlockType.DiagonalSupportRightToBottom;
-                                _floorGrid[x + 1][z + 1] = GridBlockType.DiagonalSupportRightToBottom;
-                            }
-                            else if (z > 0 && _floorGrid[x + 1][z - 1] == GridBlockType.EdgeTop)
-                            {
-                                _floorGrid[x + 1][z] = GridBlockType.DiagonalRightToTop; // left to top diagonal
-                                _floorGrid[x][z] = GridBlockType.DiagonalSupportRightToTop;
-                                _floorGrid[x + 1][z - 1] = GridBlockType.DiagonalSupportRightToTop;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void InstantiateFloor(int x, int z, GridBlockType blockType, Transform previewRoot)
-        {
-            var offsetAddSpawnPos = floorGrid.cellSize / 2;
-            offsetAddSpawnPos.y = 0;
-            var spawnPos =
-                floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0)) +
-                offsetAddSpawnPos;
+            var spawnPos = GetCellPosition(x, z);
 
             if (blockType == GridBlockType.Normal)
             {
@@ -196,7 +92,7 @@ namespace BlackHole.LevelSpawner
                 var prefab = centerBlockPrefabsSetup.centerBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, randomRotationIndex * 90, 0);
                 
-                Instantiate(prefab, spawnPos, rotation, previewRoot);
+                Instantiate(prefab, spawnPos, rotation, _floorRoot);
                 return;
             }
 
@@ -223,7 +119,7 @@ namespace BlackHole.LevelSpawner
                 var prefab = edgeBlockPrefabsSetup.edgeBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, _floorRoot);
                 obj.transform.localScale = Vector3.one;
                 
                 return;
@@ -252,7 +148,7 @@ namespace BlackHole.LevelSpawner
                 var prefab = cornerPrefabsSetup.cornerPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, _floorRoot);
                 obj.transform.localScale = Vector3.one;
                 return;
             }
@@ -280,7 +176,7 @@ namespace BlackHole.LevelSpawner
                 var prefab = diagonalBlockPrefabsSetup.diagonalBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, _floorRoot);
                 obj.transform.localScale = Vector3.one;
                 return;
             }
@@ -308,78 +204,35 @@ namespace BlackHole.LevelSpawner
                 var prefab = diagonalSupportBlockPrefabsSetup.diagonalSupportBlockPrefabs[randomBlockIndex];
                 var rotation = Quaternion.Euler(0, rotationY, 0);
                 
-                var obj = Instantiate(prefab, spawnPos, rotation, previewRoot);
+                var obj = Instantiate(prefab, spawnPos, rotation, _floorRoot);
                 obj.transform.localScale = Vector3.one;
                 return;
             }
         }
         
-        public void RebuildFloor(GridBlockType[][] floorGrid, Transform previewRoot)
+        public void RebuildFloor(GridBlockType[][] floorGrid, RectInt floorGridBounds, Vector2 floorCellSize, Transform spawnRoot)
         {
+            _floorGridBounds = floorGridBounds;
+            _floorCellSize = floorCellSize;
+            _floorRoot = spawnRoot;
+            
             // Clear previous preview
-            for (int i = previewRoot.childCount - 1; i >= 0; i--)
+            for (int i = spawnRoot.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(previewRoot.GetChild(i).gameObject);
+                DestroyImmediate(spawnRoot.GetChild(i).gameObject);
             }
 
             for (int x = 0; x < _floorGridBounds.width; x++)
             {
                 for (int z = 0; z < _floorGridBounds.height; z++)
                 {
-                    if (_floorGrid[x][z] != GridBlockType.None)
+                    if (floorGrid[x][z] != GridBlockType.None)
                     {
-                        InstantiateFloor(x, z, floorGrid[x][z], previewRoot);
+                        InstantiateFloor(x, z, floorGrid[x][z]);
                     }
                 }
             }
         }
         
-        private void OnDrawGizmos()
-        {
-            if (!debugDraw) return;
-            if (_floorGrid == null) return;
-            
-            for (int x = 0; x < _floorGridBounds.width; x++)
-            {
-                for (int z = 0; z < _floorGridBounds.height; z++)
-                {
-                    Vector3 worldPos = floorGrid.CellToWorld(new Vector3Int(x + _floorGridBounds.xMin, z + _floorGridBounds.yMin, 0));
-                    worldPos += floorGrid.cellSize / 2;
-                    
-                    if (_floorGrid[x][z] != GridBlockType.None)
-                    {
-                        switch (_floorGrid[x][z])
-                        {
-                            case GridBlockType.Normal:
-                                Gizmos.color = Color.white;
-                                break;
-                            case GridBlockType.EdgeTop:
-                            case GridBlockType.EdgeBottom:
-                            case GridBlockType.EdgeLeft:
-                            case GridBlockType.EdgeRight:
-                                Gizmos.color = Color.yellow;
-                                Handles.Label(worldPos, _floorGrid[x][z].ToString());
-                                break;
-                            case GridBlockType.CornerTopLeft:
-                            case GridBlockType.CornerTopRight:
-                            case GridBlockType.CornerBottomLeft:
-                            case GridBlockType.CornerBottomRight:
-                                Gizmos.color = Color.red;
-                                Handles.Label(worldPos, _floorGrid[x][z].ToString());
-                                break;
-                            case GridBlockType.DiagonalLeftToTop:
-                            case GridBlockType.DiagonalLeftToBottom:
-                            case GridBlockType.DiagonalRightToTop:
-                            case GridBlockType.DiagonalRightToBottom:
-                                Gizmos.color = Color.blue;
-                                Handles.Label(worldPos, _floorGrid[x][z].ToString());
-                                break;
-                        }
-                        
-                        Gizmos.DrawWireCube(worldPos, floorGrid.cellSize);
-                    }
-                }
-            }
-        }
     }
 }

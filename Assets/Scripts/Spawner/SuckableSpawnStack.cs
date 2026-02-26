@@ -1,10 +1,19 @@
 using BlackHole.Data;
 using BlackHole.Interfaces;
+using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BlackHole.Spawner
 {
     [System.Serializable]
+    internal struct SuckableSpawnStackJsonData
+    {
+        public SuckableObjectId objectId;
+        public int stackCount;
+        public float offsetSizeY;
+    }
+    
     public class SuckableSpawnStack : ISuckableSpawnLogic
     {
         [SerializeField] private SuckableObjectId objectId;
@@ -44,6 +53,28 @@ namespace BlackHole.Spawner
             Gizmos.color = Color.blue;
             float totalHeight = perElementHeight * stackCount;
             Gizmos.DrawWireCube(argument.position + Vector3.up * totalHeight / 2f, new Vector3(1f, totalHeight, 1f));
+        }
+
+        public SuckableSpawnSerializeEntry SerializeJson()
+        {
+            var jsonData = new SuckableSpawnStackJsonData()
+            {
+                objectId = objectId,
+                stackCount = stackCount,
+                offsetSizeY = offsetSizeY
+            };
+            
+            return SuckableSpawnSerializeEntry.Pack(
+                SuckableSpawnType.Stack,
+                jsonData);
+        }
+
+        public void DeserializeFromJson(SuckableSpawnSerializeEntry data)
+        {
+            var jsonData = JsonConvert.DeserializeObject<SuckableSpawnStackJsonData>(data.content.ToString());
+            objectId = jsonData.objectId;
+            stackCount = jsonData.stackCount;
+            offsetSizeY = jsonData.offsetSizeY;
         }
     }
 }

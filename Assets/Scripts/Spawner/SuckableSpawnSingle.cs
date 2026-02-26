@@ -1,9 +1,17 @@
 using BlackHole.Data;
 using BlackHole.Interfaces;
+using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BlackHole.Spawner
 {
+    [System.Serializable]
+    internal struct SuckableSpawnSingleJsonData
+    {
+        public SuckableObjectId targetObjectId;
+    }
+    
     public class SuckableSpawnSingle : ISuckableSpawnLogic
     {
         [SerializeField] private SuckableObjectId targetObjectId;
@@ -22,6 +30,22 @@ namespace BlackHole.Spawner
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(argument.position, 0.5f);
+        }
+
+        public SuckableSpawnSerializeEntry SerializeJson()
+        {
+            return SuckableSpawnSerializeEntry.Pack(
+                SuckableSpawnType.Single,
+                new SuckableSpawnSingleJsonData()
+                {
+                    targetObjectId = targetObjectId
+                });
+        }
+
+        public void DeserializeFromJson(SuckableSpawnSerializeEntry data)
+        {
+            var jsonData = JsonConvert.DeserializeObject<SuckableSpawnSingleJsonData>(data.content.ToString());
+            targetObjectId = jsonData.targetObjectId;
         }
     }
 }

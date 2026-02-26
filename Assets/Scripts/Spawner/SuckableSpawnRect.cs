@@ -1,12 +1,28 @@
 using System.Collections.Generic;
+using System.Linq;
 using BlackHole.Data;
 using BlackHole.Interfaces;
+using BlackHole.Utilities;
+using Newtonsoft.Json;
 using SaintsField;
+using Unity.Serialization.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BlackHole.Spawner
 {
     [System.Serializable]
+    internal struct SuckableSpawnRectJsonData
+    {
+        public SuckableSpawnSerializeEntry[] elements;
+        public float xSpacing;
+        public float zSpacing;
+        public bool isInterleaved;
+        public float sizeX;
+        public float sizeZ;
+        public float elementScale;
+    }
+    
     public class SuckableSpawnRect : ISuckableSpawnLogic
     {
         [SerializeReference, ReferencePicker] private List<ISuckableSpawnLogic> elements;
@@ -94,6 +110,37 @@ namespace BlackHole.Spawner
 
                     eachElement.DrawGizmos(elementArgument);
                 }
+            }
+        }
+
+        public SuckableSpawnSerializeEntry SerializeJson()
+        {
+            var data = new SuckableSpawnRectJsonData
+            {
+                elements = elements.Select(x => x.SerializeJson()).ToArray(),
+                xSpacing = xSpacing,
+                zSpacing = zSpacing,
+                isInterleaved = isInterleaved,
+                sizeX = size.x,
+                sizeZ = size.y,
+                elementScale = elementScale
+            };
+            
+            return SuckableSpawnSerializeEntry.Pack(SuckableSpawnType.Rect, data);
+        }
+
+        public void DeserializeFromJson(SuckableSpawnSerializeEntry data)
+        {
+            var jsonData = JsonConvert.DeserializeObject<SuckableSpawnRectJsonData>(data.content.ToString());
+            xSpacing = jsonData.xSpacing;
+            zSpacing = jsonData.zSpacing;
+            isInterleaved = jsonData.isInterleaved;
+            size = new Vector2(jsonData.sizeX, jsonData.sizeZ);
+            elementScale = jsonData.elementScale;
+            elements = new List<ISuckableSpawnLogic>();
+            foreach (var obj in jsonData.elements)
+            {
+                elements.Add(SuckableSpawnFactory.CreateFromJson(obj));
             }
         }
     }

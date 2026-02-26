@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using BlackHole.Interfaces;
 using BlackHole.Spawner;
+using BlackHole.Utilities;
+using Newtonsoft.Json;
 using SaintsField;
 using SaintsField.Playa;
 using UnityEditor;
@@ -16,6 +18,7 @@ namespace BlackHole.LevelCreator
         [SerializeField] private Transform floorTransform;
         [SerializeField] private Grid floorGrid;
         [SerializeField] private Transform spawnerTransform;
+        [SerializeField] private LevelSpawner.LevelSpawner tester;
 
         private FloorPolisher _floorPolisher;
 
@@ -80,7 +83,8 @@ namespace BlackHole.LevelCreator
                 {
                     position = spawner.transform.position,
                     rotation = spawner.transform.rotation.eulerAngles,
-                    spawnLogic = spawner.SpawnLogic
+                    scale = spawner.transform.localScale.x,
+                    spawnLogic = spawner.SpawnLogic.SerializeJson()
                 });
             }
 
@@ -88,7 +92,7 @@ namespace BlackHole.LevelCreator
         }
         
         [Button]
-        private void TrySerialize()
+        private void SaveToJson()
         {
             _floorPolisher.ExecutePolish();
             
@@ -96,14 +100,22 @@ namespace BlackHole.LevelCreator
             {
                 floorGrid = _floorPolisher.FloorGrids,
                 floorGridBounds = _floorPolisher.FloorGridBounds,
-                suckableSpawnEntries = ListAllSpawnerEntries()
+                suckableSpawnEntries = ListAllSpawnerEntries(),
+                floorGridCellSize = new JsonFriendlyVector2(floorGrid.cellSize.x, floorGrid.cellSize.z)
             };
 
-            var result = JsonUtility.ToJson(levelData);
-            Debug.Log(result);
+            var result = JsonConvert.SerializeObject(levelData, new JsonSerializerSettings 
+            { 
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
             
-            var resultCopy2 = JsonUtility.FromJson<LevelData>(result);
-            Debug.Log("Im just testing");
+            if (EditorUtility.SaveFilePanel("Save Level Data", "", "LevelData.json", "json") is { } path && !string.IsNullOrEmpty(path))
+            {
+                System.IO.File.WriteAllText(path, result);
+                Debug.Log($"Level data saved to {path}");
+                
+                AssetDatabase.Refresh();
+            }
         }
         
         private void OnDrawGizmos()

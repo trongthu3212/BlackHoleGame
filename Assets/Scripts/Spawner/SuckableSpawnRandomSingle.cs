@@ -1,11 +1,20 @@
 using System.Collections.Generic;
 using BlackHole.Data;
 using BlackHole.Interfaces;
+using BlackHole.Utilities;
+using Newtonsoft.Json;
+using Unity.Serialization.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace BlackHole.Spawner
 {
     [System.Serializable]
+    internal struct SuckableSpawnRandomSingleJsonData
+    {
+        public List<SuckableObjectId> targetObjectIds;
+    }
+    
     public class SuckableSpawnRandomSingle : ISuckableSpawnLogic
     {
         [SerializeField] private List<SuckableObjectId> targetObjectIds;
@@ -27,6 +36,24 @@ namespace BlackHole.Spawner
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(argument.position, 0.5f);
+        }
+
+        public SuckableSpawnSerializeEntry SerializeJson()
+        {
+            var jsonData = new SuckableSpawnRandomSingleJsonData()
+            {
+                targetObjectIds = targetObjectIds
+            };
+            
+            return SuckableSpawnSerializeEntry.Pack(
+                SuckableSpawnType.RandomSingle,
+                jsonData);
+        }
+
+        public void DeserializeFromJson(SuckableSpawnSerializeEntry data)
+        {
+            var jsonData = JsonConvert.DeserializeObject<SuckableSpawnRandomSingleJsonData>(data.content.ToString());
+            targetObjectIds = jsonData.targetObjectIds;
         }
     }
 }
