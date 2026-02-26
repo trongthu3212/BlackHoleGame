@@ -1014,22 +1014,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Singletons
       objectReference: {fileID: 0}
-    - target: {fileID: 4651144415617035969, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
-      propertyPath: FollowOffset.y
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4651144415617035969, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
-      propertyPath: FollowOffset.z
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5658627097316297559, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 30.900234
-      objectReference: {fileID: 0}
-    - target: {fileID: 5658627097316297559, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -13.521297
-      objectReference: {fileID: 0}
     - target: {fileID: 7399655370410751822, guid: 4dc23f089fb79d747ae2f497a4fcfbc9, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
