@@ -52,7 +52,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: PFB_DiagonalB
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7071803344026776075, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
+    - {fileID: 7025048738338362837, guid: 6a2fe185cbc1aef4fb1ec2ee9093e5cc, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

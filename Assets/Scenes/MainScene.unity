@@ -946,6 +946,18 @@ PrefabInstance:
       value: PFB_HoleController
       objectReference: {fileID: 0}
     - target: {fileID: 7665849061470795241, guid: 0f27574a5e736e246af1c85726ddf686, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665849061470795241, guid: 0f27574a5e736e246af1c85726ddf686, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665849061470795241, guid: 0f27574a5e736e246af1c85726ddf686, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665849061470795241, guid: 0f27574a5e736e246af1c85726ddf686, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
