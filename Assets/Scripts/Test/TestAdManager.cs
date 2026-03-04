@@ -1,5 +1,6 @@
 using GoogleMobileAds.Api;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace BlackHole.Test
@@ -8,9 +9,14 @@ namespace BlackHole.Test
     {
         [SerializeField] private Button loadBannerAdButton;
         [SerializeField] private Button showBannerAdButton;
+        [SerializeField] private Button loadInterstitialAdButton;
+        [SerializeField] private Button showInterstitialAdButton;
         
-        private string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-        private BannerView bannerView;
+        private readonly string _adUnitId = "ca-app-pub-3940256099942544/6300978111";
+        private readonly string _interestialAdUnitId = "ca-app-pub-3940256099942544/1033173712";
+        
+        private BannerView _bannerView;
+        private InterstitialAd _interstitialAd;
         
         private void Awake()
         {
@@ -32,44 +38,85 @@ namespace BlackHole.Test
             
             loadBannerAdButton.onClick.AddListener(LoadBannerAd);
             showBannerAdButton.onClick.AddListener(ShowBannerAd);
+            loadInterstitialAdButton.onClick.AddListener(LoadInterstitialAd);
+            showInterstitialAdButton.onClick.AddListener(ShowInterstitialAd);
         }
 
         private void LoadBannerAd()
         {
-            if (bannerView == null)
+            if (_bannerView == null)
             {
                 CreateBannerAd();
             }
 
-            if (bannerView != null)
+            if (_bannerView != null)
             {
-                bannerView.LoadAd(new AdRequest());
-                bannerView.Hide();
+                _bannerView.LoadAd(new AdRequest());
+                _bannerView.Hide();
             }
         }
         
         private void ShowBannerAd()
         {
-            if (bannerView == null)
+            if (_bannerView == null)
             {
                 CreateBannerAd();
             }
             
-            if (bannerView != null)
+            if (_bannerView != null)
             {
-                bannerView.Show();
+                _bannerView.Show();
+            }
+        }
+        
+        private void LoadInterstitialAd()
+        {
+            CreateInterstitialAd();
+        }
+        
+        private void ShowInterstitialAd()
+        {
+            if (_interstitialAd != null && _interstitialAd.CanShowAd())
+            {
+                _interstitialAd.Show();
+            }
+            else
+            {
+                Debug.LogWarning("Interstitial ad is not ready to be shown.");
             }
         }
         
         private void CreateBannerAd()
         {
-            if (bannerView != null)
+            if (_bannerView != null)
             {
-                bannerView.Destroy();
-                bannerView = null;
+                _bannerView.Destroy();
+                _bannerView = null;
             }
             
-            bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
+            _bannerView = new BannerView(_adUnitId, AdSize.Banner, AdPosition.Bottom);
+        }
+        
+        private void CreateInterstitialAd()
+        {
+            if (_interstitialAd != null)
+            {
+                _interstitialAd.Destroy();
+                _interstitialAd = null;
+            }
+
+            var adRequest = new AdRequest();
+            InterstitialAd.Load(_interestialAdUnitId, adRequest, (interstitialAd, error) =>
+            {
+                if (error != null)
+                {
+                    Debug.LogError("Interstitial ad failed to load with error: " + error);
+                    return;
+                }
+
+                Debug.Log("Interstitial ad loaded successfully.");
+                _interstitialAd = interstitialAd;
+            });
         }
     }
 }
