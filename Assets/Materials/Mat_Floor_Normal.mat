@@ -246,12 +246,12 @@ Material:
     - _SpecularThresholdOffset: 0.25
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Stencil: 1
-    - _StencilComp: 8
+    - _Stencil: 2
+    - _StencilComp: 3
     - _StencilFail: 0
     - _StencilPass: 0
     - _StencilReadMask: 255
-    - _StencilRef: 0
+    - _StencilRef: 15
     - _StencilWriteMask: 255
     - _StencilZFail: 0
     - _StylizeTab: 1

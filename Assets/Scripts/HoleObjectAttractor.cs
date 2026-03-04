@@ -139,12 +139,19 @@ namespace BlackHole
                         continue;
                     }
 
+                    if (attractCenterY > targetRb.position.y)
+                    {
+                        // Stop pulling it
+                        continue;
+                    }
+
                     targetRb.isKinematic = false;
 
                     var distanceToHoleV = targetRb.position - selfRigidbody.position;
                     distanceToHoleV.y = 0;
                     
                     var distanceToHole = distanceToHoleV.magnitude;
+                    
                     var samplePos = Mathf.Clamp01(distanceToHole / maxAttractDistance);
                     var attractScale = suckScaleCurve.Evaluate(samplePos);
                     var forceApply = attractForce * attractScale;
